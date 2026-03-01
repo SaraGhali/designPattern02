@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function CountryService() {
+            this.getCountries = function () {
+                return ["Egypt", "Canada", "Japan", "Germany", "Brazil"];
+            };
+        }
+
+        function ProxyCountryService() {
+            let service = new CountryService(); // Composition
+            let countryCache = null;            // Memory
+
+            return {
+                getCountries: function () {
+                    // If cache is empty, fetch from the real service
+                    if (!countryCache) {
+                        countryCache = service.getCountries();
+                    } else {
+                        console.log("--- Returning from Cache (Instant) ---");
+                    }
+
+                    console.log(countryCache);
+                    return countryCache;
+                }
+            };
+        }
+
+        // Usage
+        let countryProxy = new ProxyCountryService();
+
+        countryProxy.getCountries();
+        // Output: ["Egypt", "Canada", "Japan", "Germany", "Brazil"]
+        countryProxy.getCountries();
+        // Output: --- Returning from Cache (Instant) ---
+        //         ["Egypt", "Canada", "Japan", "Germany", "Brazil"]
+    </script>
+</body>
+
+</html>
