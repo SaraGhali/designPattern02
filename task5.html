@@ -1,74 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <script>
-    // --- Complex Subsystem Classes (The Managers) ---
+        // --- Complex Subsystem Classes (The Managers) ---
 
-    function InventoryManager() {
-        this.checkStock = function(productId) {
-            console.log("Checking stock for Product ID: " + productId);
-            return true; // Assume always in stock for this example
-        };
-    }
+        function InventoryManager() {
+            this.checkStock = function (productId) {
+                console.log("Checking stock for Product ID: " + productId);
+                return true; // Assume always in stock for this example
+            };
+        }
 
-    function PaymentProcessor() {
-        this.processPayment = function(amount) {
-            console.log("Processing payment of $" + amount + " through Secure Gateway...");
-            return true;
-        };
-    }
+        function PaymentProcessor() {
+            this.processPayment = function (amount) {
+                console.log("Processing payment of $" + amount + " through Secure Gateway...");
+                return true;
+            };
+        }
 
-    function ShippingDepartment() {
-        this.calculateShipping = function() {
-            return 15.00;
-        };
-        this.scheduleDelivery = function(productId) {
-            console.log("Package scheduled for Product: " + productId);
-        };
-    }
+        function ShippingDepartment() {
+            this.calculateShipping = function () {
+                return 15.00;
+            };
+            this.scheduleDelivery = function (productId) {
+                console.log("Package scheduled for Product: " + productId);
+            };
+        }
 
-    // --- The Facade ---
-    // This simplifies the "Order" process into one function call
-    function StoreFacade() {
-        let inventory = new InventoryManager();
-        let payment = new PaymentProcessor();
-        let shipping = new ShippingDepartment();
+        // --- The Facade ---
+        // This simplifies the "Order" process into one function call
+        function StoreFacade() {
+            let inventory = new InventoryManager();
+            let payment = new PaymentProcessor();
+            let shipping = new ShippingDepartment();
 
-        this.placeOrder = function(productId, price) {
-            console.log("--- Starting Order Process ---");
-            
-            // 1. Check Inventory
-            if (!inventory.checkStock(productId)) {
-                return "Order Failed: Out of Stock";
-            }
+            this.placeOrder = function (productId, price) {
+                console.log("--- Starting Order Process ---");
 
-            // 2. Calculate Total (Price + Shipping)
-            let total = price + shipping.calculateShipping();
+                // 1. Check Inventory
+                if (!inventory.checkStock(productId)) {
+                    return "Order Failed: Out of Stock";
+                }
 
-            // 3. Process Payment
-            if (payment.processPayment(total)) {
-                // 4. Ship the item
-                shipping.scheduleDelivery(productId);
-                console.log("--- Order Completed Successfully! ---");
-                return "Success";
-            }
+                // 2. Calculate Total (Price + Shipping)
+                let total = price + shipping.calculateShipping();
 
-            return "Order Failed: Payment Declined";
-        };
-    }
+                // 3. Process Payment
+                if (payment.processPayment(total)) {
+                    // 4. Ship the item
+                    shipping.scheduleDelivery(productId);
+                    console.log("--- Order Completed Successfully! ---");
+                    return "Success";
+                }
 
-    // --- Execution (The Customer doesn't see the complexity) ---
+                return "Order Failed: Payment Declined";
+            };
+        }
 
-    let store = new StoreFacade();
-    
-    // The customer only knows about "placeOrder"
-    store.placeOrder("Laptop_552", 1200);
+        // --- Execution (The Customer doesn't see the complexity) ---
 
-</script>
+        let store = new StoreFacade();
+
+        // The customer only knows about "placeOrder"
+        store.placeOrder("Laptop_552", 1200);
+
+    </script>
 </body>
+
 </html>
