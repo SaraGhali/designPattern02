@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 1. The "Component" Interface (Leaf)
+        function Book(title, pages) {
+            this.title = title;
+            this.pages = pages;
+
+            this.getPages = function () {
+                return this.pages;
+            };
+
+            this.showHierarchy = function (indent = 0) {
+                console.log(`${" ".repeat(indent)}📖 Book: ${this.title} (${this.pages} pages)`);
+            };
+        }
+
+        // 2. The "Composite" (Container)
+        function Box(name) {
+            this.name = name;
+            this.children = []; // This can hold Books OR other Boxes
+
+            this.add = function (item) {
+                this.children.push(item);
+            };
+
+            // The "Composite" logic: sum of all children
+            this.getPages = function () {
+                let total = 0;
+                for (let item of this.children) {
+                    total += item.getPages();
+                }
+                return total;
+            };
+
+            this.showHierarchy = function (indent = 0) {
+                console.log(`${" ".repeat(indent)}📦 Box: ${this.name} (Total Pages: ${this.getPages()})`);
+                for (let item of this.children) {
+                    item.showHierarchy(indent + 4);
+                }
+            };
+        }
+
+        // --- Execution ---
+
+        // Create individual books
+        let book1 = new Book("JavaScript Basics", 200);
+        let book2 = new Book("Design Patterns", 350);
+        let book3 = new Book("Clean Code", 400);
+
+        // Create a small box
+        let smallBox = new Box("Programming Essentials");
+        smallBox.add(book1);
+        smallBox.add(book2);
+
+        // Create a big box and put the small box + another book inside it
+        let mainBox = new Box("Master Delivery");
+        mainBox.add(smallBox);
+        mainBox.add(book3);
+
+        // Show results
+        mainBox.showHierarchy();
+        console.log("--------------------------------");
+        console.log("Grand Total Pages in Main Box: " + mainBox.getPages());
+
+    </script>
+</body>
+
+</html>
