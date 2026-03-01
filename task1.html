@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 1. The Base Teacher Class
+        class Teacher {
+            constructor(name, subject) {
+                this.name = name;
+                this.subject = subject;
+            }
+
+            describe() {
+                return `${this.name} teaches ${this.subject}`;
+            }
+        }
+
+        // 2. The Decorator Function
+        function decorateTeacher(teacherInstance, details) {
+            const { salary, nationality, street } = details;
+
+            if (salary) teacherInstance.salary = salary;
+            if (nationality) teacherInstance.nationality = nationality;
+            if (street) teacherInstance.street = street;
+
+            const oldDescribe = teacherInstance.describe.bind(teacherInstance);
+            teacherInstance.describe = function () {
+                return `${oldDescribe()} (Nationality: ${this.nationality || 'N/A'}, Salary: ${this.salary || 'N/A'})`;
+            };
+
+            return teacherInstance;
+        }
+
+        // --- Usage ---
+
+        let mrsSara = new Teacher("Mrs. Sara", "Programming");
+        console.log(mrsSara.describe());
+
+        // Decorate mrsSara with dynamic properties
+        decorateTeacher(mrsSara, {
+            salary: "200 USD",
+            nationality: "Egyptian",
+            street: "9th Street, el Goon"
+        });
+
+        console.log(mrsSara.describe());
+        // Output: Mrs. Sara teaches Programming (Nationality: Egyptian, Salary: 200 USD)
+
+        console.log(`Address: ${mrsSara.street}`);
+        // Output: Address: 9th Street, Maadi
+    </script>
+</body>
+
+</html>
