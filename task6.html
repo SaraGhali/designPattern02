@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // --- The States (Behavior Definitions) ---
+
+        const STATE_IN_PROGRESS = {
+            name: "In Progress",
+            next: function (task) {
+                console.log("Moving from In Progress to Review...");
+                task.setState(STATE_READY_FOR_REVIEW);
+            },
+            action: function () {
+                console.log("Status: Keep working, the task is currently being coded.");
+            }
+        };
+
+        const STATE_READY_FOR_REVIEW = {
+            name: "Ready for Review",
+            next: function (task) {
+                console.log("Review passed! Moving to Done.");
+                task.setState(STATE_DONE);
+            },
+            action: function () {
+                console.log("Status: Waiting for a manager to approve the changes.");
+            }
+        };
+
+        const STATE_DONE = {
+            name: "Done",
+            next: function (task) {
+                console.log("Task is already finished. No further steps.");
+            },
+            action: function () {
+                console.log("Status: Task completed. Great job!");
+            }
+        };
+
+        // --- The Context (The ToDo Task) ---
+
+        function ToDoTask(title) {
+            this.title = title;
+            // Initial State
+            this.currentState = STATE_IN_PROGRESS;
+
+            this.setState = function (state) {
+                this.currentState = state;
+            };
+
+            this.proceed = function () {
+                this.currentState.next(this);
+            };
+
+            this.showStatus = function () {
+                console.log(`--- Task: ${this.title} ---`);
+                this.currentState.action();
+            };
+        }
+
+        // --- Execution ---
+
+        let myTask = new ToDoTask("Fix Login Bug");
+
+        myTask.showStatus(); // Status: In Progress behavior
+        myTask.proceed();    // Transition to Review
+
+        myTask.showStatus(); // Status: Ready for Review behavior
+        myTask.proceed();    // Transition to Done
+
+        myTask.showStatus(); // Status: Done behavior
+        myTask.proceed();    // Remains in Done
+
+    </script>
+</body>
+
+</html>
