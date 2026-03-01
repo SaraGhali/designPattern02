@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 1. The Implementation Interface (The "Hardware")
+        // Both TV and Speaker must follow this structure
+        class TV {
+            constructor() { this.volume = 10; this.isMuted = false; }
+            setVolume(value) { this.volume = value; console.log(`TV Volume: ${this.volume}`); }
+            getVolume() { return this.volume; }
+        }
+
+        class Speaker {
+            constructor() { this.volume = 20; this.isMuted = false; }
+            setVolume(value) { this.volume = value; console.log(`Speaker Volume: ${this.volume}`); }
+            getVolume() { return this.volume; }
+        }
+
+        // 2. The Abstraction (The "Remote Controls")
+        // Base Remote: Supports increase and decrease
+        class BasicRemote {
+            constructor(device) {
+                this.device = device;
+            }
+
+            increaseVolume() {
+                const current = this.device.getVolume();
+                this.device.setVolume(current + 1);
+            }
+
+            decreaseVolume() {
+                const current = this.device.getVolume();
+                this.device.setVolume(current - 1);
+            }
+        }
+
+        // Advanced Remote: Extends BasicRemote to add "Mute"
+        class AdvancedRemote extends BasicRemote {
+            constructor(device) {
+                super(device);
+                this.oldVolume = 0;
+            }
+
+            mute() {
+                if (this.device.getVolume() > 0) {
+                    this.oldVolume = this.device.getVolume();
+                    this.device.setVolume(0);
+                    console.log(`${this.device.constructor.name} Muted.`);
+                } else {
+                    this.device.setVolume(this.oldVolume);
+                    console.log(`${this.device.constructor.name} Unmuted.`);
+                }
+            }
+        }
+
+        // --- Usage ---
+
+        const myTV = new TV();
+        const mySpeaker = new Speaker();
+
+        // Using a Basic Remote for the TV (No Mute)
+        const tvRemote = new BasicRemote(myTV);
+        const speakerRemote = new BasicRemote(mySpeaker);
+        tvRemote.increaseVolume(); // TV Volume: 11
+        tvRemote.decreaseVolume(); // TV Volume: 10
+        speakerRemote.increaseVolume(); // Speaker Volume: 21
+        speakerRemote.decreaseVolume(); // Speaker Volume: 20
+
+        // Using an Advanced Remote for the Speaker (Supports Mute)
+        const advancedSpeakerRemote = new AdvancedRemote(mySpeaker);
+        const advancedTVRemote = new AdvancedRemote(myTV);
+        advancedSpeakerRemote.decreaseVolume(); // Speaker Volume: 19
+        advancedTVRemote.increaseVolume(); // TV Volume: 11
+        advancedSpeakerRemote.mute();           // Speaker Muted. (Volume: 0)
+        advancedSpeakerRemote.mute();           // Speaker Unmuted. (Volume: 19)
+        advancedTVRemote.mute();                // TV Muted. (Volume: 0)    
+    </script>
+</body>
+
+</html>
